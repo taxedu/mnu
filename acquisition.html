@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사업장가입자 자격취득신고 (연습)</title>
+<style>
+/* 4대보험 신고 연습 화면 공통 스타일 (취득·상실 페이지 공용) */
+:root{
+  --page-bg:#e9e9ec; --panel:#fff; --text:#222; --muted:#888;
+  --blue:#2470b3; --blue-dark:#1b5d97; --notice:#2b5aa8;
+  --line:#d9dce1; --head-line:#333;
+  --in-bg:#eaf1fa; --in-border:#d3dbe6; --in-gray:#ececec;
+  --btn-dark:#555a5f; --btn-gray:#8d8f92; --help:#1f2a4d;
+  --nps:#4a4f9e;  --nps-bg:#eff1f8;
+  --nhis:#d94848; --nhis-bg:#fdf1f1;
+  --ei:#3f9a68;   --ei-bg:#eef6f0;
+  --ia:#2a9a9c;   --ia-bg:#edf6f3;
+  --base-bg:#f2f3f6;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page-bg);color:var(--text);font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:14px;letter-spacing:-.3px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 0 40px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0 0}
+.topbar .notice{color:var(--notice);font-size:13px;padding-top:8px}
+.topbar .notice b{color:#1d3f8f}
+.topbar .btns{display:flex;gap:8px}
+.btn-pill{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;background:#fff;border:1px solid #c9ccd1;border-radius:6px;font:inherit;font-size:14px;cursor:pointer;color:#222}
+.btn-pill.add{border-color:var(--blue);color:var(--blue)}
+.btn-pill .ico{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:15px;line-height:1}
+.btn-pill.del .ico{background:#555}
+.btn-pill.add .ico{background:var(--blue)}
+.tabs{margin-top:22px;border-bottom:3px solid #e21d1d;display:flex}
+.tab{background:var(--blue);color:#fff;padding:10px 22px;font-size:14px;cursor:default}
+.panel{background:var(--panel);padding:26px 22px 22px;border-radius:0 0 6px 6px}
+.panel + .panel{margin-top:14px;border-radius:6px}
+h2.sec-title{font-size:18px;margin:0 0 12px;font-weight:bold}
+
+/* 표 */
+table.form{width:100%;border-collapse:collapse;table-layout:fixed;border-top:2px solid var(--head-line);border-bottom:1px solid #b9bcc2}
+table.form th,table.form td{border-bottom:1px solid var(--line);padding:6px 10px;height:46px;vertical-align:middle;text-align:left}
+table.form th{background:var(--base-bg);font-weight:bold;font-size:13.5px;padding-left:16px}
+table.form td{background:#fff}
+table.form th + td, table.form td + th{border-left:1px solid var(--line)}
+table.form th + th{border-left:1px solid var(--line)}
+table.form td.split{padding:0}
+.req{color:#e21d1d}
+.line{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.unit{font-size:14px;color:#333}
+
+/* 보험별 섹션 색상 */
+.ins{margin-top:26px}
+.ins-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ins-head h3{font-size:18px;margin:0}
+.badge{width:38px;height:38px;border-radius:50%;border:1px solid #d5d7db;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+.badge.wide{width:64px;border-radius:20px}
+.ins table.form{border-top-width:2px}
+.ins.nps table.form{border-top-color:var(--nps)} .ins.nps th{background:var(--nps-bg)}
+.ins.nhis table.form{border-top-color:var(--nhis)} .ins.nhis th{background:var(--nhis-bg)}
+.ins.ei table.form{border-top-color:var(--ei)} .ins.ei th{background:var(--ei-bg)}
+.ins.ia table.form{border-top-color:var(--ia)} .ins.ia th{background:var(--ia-bg)}
+.ins-notes{margin:8px 0 0;padding:0;list-style:none;color:var(--notice);font-size:12.5px;font-weight:bold;line-height:1.7}
+
+/* 입력칸 */
+input.in{height:34px;border:1px solid var(--in-border);background:var(--in-bg);border-radius:3px;padding:0 10px;font:inherit;font-size:13.5px;color:#222;width:100%;min-width:0}
+input.in::placeholder{color:#9aa2ad}
+input.in.white{background:#fff}
+input.in.num{text-align:right}
+input.in:focus{outline:2px solid #7fb0e0;outline-offset:-1px;background:#fff}
+input.in[readonly]{background:var(--in-gray);color:#555}
+.w90{width:90px!important}.w120{width:120px!important}.w160{width:160px!important}.w180{width:180px!important}.w220{width:220px!important}.w270{width:270px!important}
+.date{position:relative;display:flex;align-items:center;width:100%}
+.date input.in{padding-right:40px}
+.date .cal{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;background:none;cursor:pointer;padding:0;color:#555}
+.date .cal svg{width:22px;height:22px}
+.date input[type=date].picker{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0}
+.date.dis .cal{cursor:not-allowed;opacity:.6}
+
+/* 버튼 */
+.btn-q{height:34px;padding:0 12px;border:0;border-radius:4px;background:var(--btn-dark);color:#fff;font:inherit;font-size:13.5px;cursor:pointer;white-space:nowrap;flex:none}
+.btn-q.gray{background:var(--btn-gray)}
+.btn-q.blue{background:var(--blue)}
+.btn-q:hover{filter:brightness(1.1)}
+.help{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--help);color:#fff;font-size:13px;font-weight:bold;align-items:center;justify-content:center;border:0;cursor:pointer;vertical-align:middle;margin-left:6px;padding:0;font-family:Arial,sans-serif}
+
+/* 라디오·체크박스 */
+.radios{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+label.rd{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;white-space:nowrap;flex:none}
+label.rd input{appearance:none;-webkit-appearance:none;margin:0;width:22px;height:22px;border:1px solid #c5c8cc;border-radius:50%;background:#fff;cursor:pointer;flex:none}
+label.rd input:checked{border:6px solid var(--blue)}
+label.rd input:disabled{background:#e4e4e4;cursor:default}
+label.rd input:disabled:checked{border-color:#c8c8c8}
+input.ck{appearance:none;-webkit-appearance:none;margin:0;width:24px;height:24px;border:1px solid #c5c8cc;border-radius:3px;background:#fff;cursor:pointer;position:relative}
+input.ck:checked{background:var(--blue);border-color:var(--blue)}
+input.ck:checked::after{content:"";position:absolute;left:7px;top:2px;width:7px;height:13px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
+.hint{color:var(--notice);font-size:12.5px;margin-top:6px}
+
+/* 하단 */
+.small-notes{font-size:12.5px;color:#444;margin:0 0 14px;line-height:1.7}
+.closing{text-align:center;margin-top:28px}
+.closing .l1{font-size:18px}
+.closing .l2{font-size:16px;margin-top:6px}
+.closing .l3{font-size:12px;color:#555;margin-top:10px}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:30px}
+.actions button{width:180px;height:40px;border-radius:4px;font:inherit;font-size:14px;cursor:pointer}
+.actions .save{background:var(--blue);border:1px solid var(--blue-dark);color:#fff}
+.actions .cancel{background:#fff;border:1px solid #9fa3a8;color:#222}
+
+/* 메시지 상자 */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-bg.on{display:flex}
+.modal{background:#fff;width:380px;max-width:calc(100% - 32px);border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.25);overflow:hidden}
+.modal .mh{background:var(--blue);color:#fff;padding:12px 16px;font-weight:bold;font-size:15px}
+.modal .mb{padding:28px 20px;text-align:center;font-size:15px;line-height:1.6;white-space:pre-line}
+.modal .mf{display:flex;justify-content:center;gap:8px;padding:0 20px 20px}
+.modal .mf button{min-width:90px;height:36px;border-radius:4px;font:inherit;cursor:pointer;border:1px solid var(--blue-dark);background:var(--blue);color:#fff}
+.modal .mf button.sub{background:#fff;color:#222;border-color:#9fa3a8}
+.practice-tag{position:fixed;right:12px;bottom:12px;background:rgba(36,112,179,.9);color:#fff;font-size:12px;padding:5px 10px;border-radius:12px;z-index:50}
+input.in.ins-pay[readonly]{background:var(--in-bg);color:#333}
+</style>
+<style>
+  /* 이 페이지 전용: 기관 로고 대신 쓰는 간단한 표시 */
+  .badge.nps{color:#2a3a8f;font-size:13px;letter-spacing:0}
+  .badge.nps span{border-bottom:3px solid #f08a24;line-height:1;padding-bottom:1px}
+  .badge.nhis i{display:inline-flex;width:24px;height:24px;border-radius:50%;background:#e03b3b;color:#fff;align-items:center;justify-content:center;font-style:normal;font-size:13px}
+  .badge.ei{color:#2f6b4b;font-size:15px;font-style:italic}
+  .badge.ia i{display:inline-flex;width:24px;height:24px;border-radius:6px;background:#2a7fc4;color:#fff;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="notice">※ 취득대상 가입자가 2명 이상인 경우 <b>첫번째 가입자에서부터 차례대로 가입자를 모두 입력한 후 [저장]</b> 하시기 바랍니다.</div>
+    <div class="btns">
+      <button type="button" class="btn-pill del" data-msg="연습용 화면에서는 가입자 1명만 입력합니다."><span class="ico">−</span>가입자 삭제</button>
+      <button type="button" class="btn-pill add" data-msg="연습용 화면에서는 가입자 1명만 입력합니다."><span class="ico">+</span>가입자 추가</button>
+    </div>
+  </div>
+  <div class="tabs"><div class="tab">가입자 1</div></div>
+
+  <form id="f" class="panel" autocomplete="off" onsubmit="return false">
+
+    <!-- 가입자 정보 -->
+    <h2 class="sec-title">가입자 정보</h2>
+    <table class="form">
+      <colgroup><col style="width:20.4%"><col style="width:13.4%"><col style="width:25.2%"><col style="width:16%"><col></colgroup>
+      <tr>
+        <th colspan="2">주민(외국인) 등록번호 · 국내거소신고번호<span class="req">*</span><button type="button" class="help" data-help="주민등록번호 앞 6자리와 뒤 7자리를 입력합니다.">?</button></th>
+        <td><div class="line"><input class="in white" data-type="digits" data-max="6" inputmode="numeric" placeholder="주민등록번호"> - <input class="in white" data-type="digits" data-max="7" inputmode="numeric" placeholder="주민등록번호"></div></td>
+        <th>성명(한글)<span class="req">*</span></th>
+        <td><div class="line"><input class="in white" placeholder="성명(한글)"><button type="button" class="btn-q blue" data-msg="인증되었습니다. (연습용)">인증</button></div></td>
+      </tr>
+      <tr>
+        <th rowspan="2">외국인 정보</th>
+        <th>영문성명</th>
+        <td colspan="3"><input class="in" placeholder="영문성명" style="width:230px"></td>
+      </tr>
+      <tr>
+        <th>국적</th>
+        <td><div class="line"><input class="in" placeholder="국적"><button type="button" class="btn-q gray" data-lookup="국적">조회</button></div></td>
+        <th>체류자격<button type="button" class="help">?</button></th>
+        <td><div class="line"><input class="in" placeholder="체류자격"><button type="button" class="btn-q gray" data-lookup="체류자격">조회</button></div></td>
+      </tr>
+      <tr>
+        <th rowspan="2">자격취득일<br>(YYYY-MM-DD)<span class="req">*</span><button type="button" class="help" data-help="입사일 등 자격을 취득한 날짜를 입력합니다.">?</button></th>
+        <td colspan="2" style="padding-top:10px;padding-bottom:8px">
+          <div class="line"><label class="rd" style="width:72px"><input type="radio" name="dateMode" value="common" checked>공통</label>
+            <div class="date" data-max="today" style="width:165px"><input class="in white" id="commonDate" placeholder="날짜 입력"></div></div>
+          <div class="hint" style="padding-left:30px">※ 자격취득일이 오늘보다 이후일 수 없습니다.</div>
+        </td>
+        <th rowspan="2">월 소득액<br>(소득월액 · 보수월액 ·<br>월평균보수액)(원)<span class="req">*</span><button type="button" class="help" data-help="공통을 선택하면 아래 4대보험 금액칸에 같은 금액이 들어갑니다.">?</button></th>
+        <td><div class="line"><label class="rd" style="width:62px"><input type="radio" name="payMode" value="common" checked>공통</label>
+          <input class="in white num" id="commonPay" data-type="money" inputmode="numeric" placeholder="월 소득액"><span class="unit">원</span></div></td>
+      </tr>
+      <tr>
+        <td colspan="2"><label class="rd"><input type="radio" name="dateMode" value="each">보험별</label></td>
+        <td><label class="rd"><input type="radio" name="payMode" value="each">보험별</label></td>
+      </tr>
+      <tr>
+        <th>대표자 여부</th>
+        <td colspan="4"><div class="radios"><label class="rd"><input type="radio" name="ceo" value="Y">예</label><label class="rd"><input type="radio" name="ceo" value="N" checked>아니오</label></div></td>
+      </tr>
+    </table>
+
+    <!-- 국민연금 -->
+    <section class="ins nps">
+      <div class="ins-head"><span class="badge wide nps"><span>NPS</span></span><h3>국민연금</h3><input type="checkbox" class="ck" aria-label="국민연금 신고"></div>
+      <table class="form">
+        <colgroup><col style="width:20.4%"><col style="width:35.5%"><col style="width:16%"><col></colgroup>
+        <tr>
+          <th>자격취득부호<span class="req">*</span></th>
+          <td><div class="line"><input class="in" placeholder="자격취득부호"><button type="button" class="btn-q" data-lookup="국민연금 자격취득부호">조회</button></div></td>
+          <th>자격취득일<span class="req">*</span><button type="button" class="help">?</button></th>
+          <td><div class="date" data-max="today"><input class="in ins-date" placeholder="날짜 입력"></div></td>
+        </tr>
+        <tr>
+          <th>취득월납부여부<span class="req">*</span><button type="button" class="help" data-help="취득한 달의 연금보험료 납부를 희망하는지 선택합니다.">?</button></th>
+          <td><div class="radios"><label class="rd"><input type="radio" name="npsPay" value="Y">희망</label><label class="rd"><input type="radio" name="npsPay" value="N">미희망</label></div></td>
+          <th>소득월액<span class="req">*</span><button type="button" class="help">?</button></th>
+          <td><div class="line"><input class="in num ins-pay" data-type="money" inputmode="numeric" placeholder="소득월액"><span class="unit">원</span></div></td>
+        </tr>
+        <tr>
+          <th>특수직종부호<button type="button" class="help">?</button></th>
+          <td colspan="3"><div class="radios"><label class="rd"><input type="radio" name="npsJob" value="1">광원</label><label class="rd"><input type="radio" name="npsJob" value="2">부원</label><label class="rd"><input type="radio" name="npsJob" value="0" checked>해당없음</label></div></td>
+        </tr>
+        <tr>
+          <th>직역연금부호<button type="button" class="help">?</button></th>
+          <td colspan="3"><div class="radios"><label class="rd"><input type="radio" name="npsOcc" value="1">직역연금가입자</label><label class="rd"><input type="radio" name="npsOcc" value="2">직역연금수급권자</label><label class="rd"><input type="radio" name="npsOcc" value="0" checked>해당없음</label></div></td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- 건강보험 -->
+    <section class="ins nhis">
+      <div class="ins-head"><span class="badge nhis"><i>♥</i></span><h3>건강보험</h3><input type="checkbox" class="ck" aria-label="건강보험 신고"></div>
+      <table class="form">
+        <colgroup><col style="width:12.5%"><col style="width:7.9%"><col style="width:31%"><col style="width:15.1%"><col></colgroup>
+        <tr>
+          <th colspan="2">자격취득부호<span class="req">*</span></th>
+          <td><div class="line"><input class="in" placeholder="자격취득부호"><button type="button" class="btn-q" data-lookup="건강보험 자격취득부호">조회</button></div></td>
+          <th>자격취득일<span class="req">*</span><button type="button" class="help">?</button></th>
+          <td><div class="date" data-max="today"><input class="in ins-date" placeholder="날짜 입력"></div></td>
+        </tr>
+        <tr>
+          <th colspan="2">보수월액<span class="req">*</span><button type="button" class="help">?</button></th>
+          <td colspan="3"><div class="line"><input class="in num ins-pay" data-type="money" inputmode="numeric" placeholder="보수월액" style="width:170px"><span class="unit">원</span></div></td>
+        </tr>
+        <tr>
+          <th>보험료</th><th>감면부호</th>
+          <td colspan="3"><div class="line"><input class="in" placeholder="감면부호" style="width:125px"><button type="button" class="btn-q" data-lookup="보험료 감면부호">조회</button></div></td>
+        </tr>
+        <tr>
+          <th>공무원/교직원</th><th>회계</th>
+          <td><div class="line"><input class="in" placeholder="회계" style="width:125px"><button type="button" class="btn-q" data-lookup="회계">조회</button></div></td>
+          <th>직종</th>
+          <td><div class="line"><input class="in" placeholder="직종" style="width:125px"><button type="button" class="btn-q" data-lookup="직종">조회</button></div></td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- 고용보험 / 산재보험 : 구조가 같아 아래 템플릿으로 생성 -->
+    <section class="ins ei" id="ei"></section>
+    <ul class="ins-notes">
+      <li>※ 2011.1.1부터 허위(정정신고 포함) · 지연신고 등 위반행위 확인시 주의 · 경고없이 즉시 과태료가 부과됩니다.</li>
+      <li>※ 고용보험 1개월 미만 고용되는 근로자는 일용근로자로 취득(고용)신고 대상이 아니므로 근로내용확인신고서를 제출하여 주시기 바랍니다.</li>
+    </ul>
+    <section class="ins ia" id="ia"></section>
+  </form>
+
+  <div class="panel">
+    <h2 class="sec-title" style="font-size:16px">사업장가입자 자격변동사유가 발생하는 경우</h2>
+    <p class="small-notes">※ 사업장가입자 자격변동사유(입사 또는 퇴사 등)가 발생하는 경우 신고 기한내 신고하여야 합니다.<br>
+      &nbsp;&nbsp;- 신고기한: 연금, 고용, 산재 (사유발생일이 속하는 달의 다음달 15일까지) / 건강 (사유발생일로부터 14일 이내)</p>
+    <table class="form" style="border-top:1px solid #888">
+      <colgroup><col style="width:20.4%"><col></colgroup>
+      <tr><th>신고일</th><td data-today></td></tr>
+      <tr><th>신고인(사용자 · 대표자)</th><td><input class="in" placeholder="신고인 성명" style="width:230px"></td></tr>
+    </table>
+    <div class="closing">
+      <div class="l1">위와 같이 자격 취득 신고를 합니다.</div>
+      <div class="l2">국민연금공단 이사장/국민건강보험공단 이사장/근로복지공단 지역본부(지사)장 귀하</div>
+      <div class="l3">※ 신고대상자를 다 입력한 후에 저장을 누르세요.</div>
+    </div>
+    <div class="actions">
+      <button type="button" class="save" id="btnSave">저장</button>
+      <button type="button" class="cancel" id="btnCancel">취소</button>
+    </div>
+  </div>
+</div>
+<div class="practice-tag">연습용 화면 · 입력 내용은 저장되지 않습니다</div>
+
+<template id="tplEiIa">
+  <div class="ins-head">{{badge}}<h3>{{name}}</h3><input type="checkbox" class="ck" aria-label="{{name}} 신고"></div>
+  <table class="form">
+    <colgroup><col style="width:20.4%"><col style="width:31.3%"><col style="width:16%"><col></colgroup>
+    <tr>
+      <th>월평균 보수<span class="req">*</span><button type="button" class="help">?</button></th>
+      <td><div class="line"><input class="in num ins-pay w180" data-type="money" inputmode="numeric" placeholder="월평균 보수"><span class="unit">원</span></div></td>
+      <th>자격취득일<span class="req">*</span><button type="button" class="help">?</button></th>
+      <td><div class="date" data-max="today"><input class="in ins-date" placeholder="날짜 입력"></div></td>
+    </tr>
+    <tr>
+      <th>직종{{req}}</th>
+      <td colspan="3"><div class="line"><input class="in w180" placeholder="직종"><button type="button" class="btn-q" data-lookup="직종">조회</button></div></td>
+    </tr>
+    <tr>
+      <th>1주(週) 소정근로시간{{req}}</th>
+      <td><div class="line"><input class="in w180" data-type="digits" data-max="2" inputmode="numeric" placeholder="1주 소정근로시간"><span class="unit">시간</span></div></td>
+      <th>비고</th>
+      <td><div class="line"><input class="in w180" placeholder="비고"><button type="button" class="btn-q" data-lookup="비고">조회</button></div></td>
+    </tr>
+    <tr>
+      <th>계약직 여부{{req}}</th>
+      <td><div class="radios"><label class="rd"><input type="radio" name="{{id}}Contract" value="Y">예</label><label class="rd"><input type="radio" name="{{id}}Contract" value="N" checked>아니오</label></div></td>
+      <th>계약종료연월<button type="button" class="help" data-help="계약직인 경우 계약 종료 연월을 6자리로 입력합니다. 예) 202301">?</button></th>
+      <td><input class="in w180" data-type="digits" data-max="6" inputmode="numeric" placeholder="예) 202301"></td>
+    </tr>
+    <tr>
+      <th>보험료 부과구분<br>(해당자)부호<button type="button" class="help">?</button></th>
+      <td><div class="line"><input class="in w180" placeholder="보험료 부과구분 부호"><button type="button" class="btn-q" data-lookup="보험료 부과구분 부호">조회</button></div></td>
+      <th>보험료 부과구분<br>(해당자)사유</th>
+      <td><div class="line"><input class="in w180" placeholder="보험료 부과구분 사유"><button type="button" class="btn-q" data-lookup="보험료 부과구분 사유">조회</button></div></td>
+    </tr>
+  </table>
+</template>
+
+<script>
+/* 4대보험 신고 연습 화면 공통 동작 (취득·상실 페이지 공용). 아무 데이터도 저장·전송하지 않습니다. */
+(function(){
+  // ---------- 메시지 상자 ----------
+  var bg=document.createElement('div');bg.className='modal-bg';
+  bg.innerHTML='<div class="modal" role="dialog" aria-modal="true"><div class="mh">알림</div><div class="mb"></div><div class="mf"></div></div>';
+  document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(bg);});
+  window.msgBox=function(text,opts){
+    opts=opts||{};
+    bg.querySelector('.mh').textContent=opts.title||'알림';
+    bg.querySelector('.mb').textContent=text;
+    var f=bg.querySelector('.mf');f.innerHTML='';
+    var ok=document.createElement('button');ok.textContent='확인';
+    ok.onclick=function(){bg.classList.remove('on');if(opts.onOk)opts.onOk();};
+    f.appendChild(ok);
+    if(opts.cancel){var c=document.createElement('button');c.className='sub';c.textContent='취소';c.onclick=function(){bg.classList.remove('on');};f.appendChild(c);}
+    bg.classList.add('on');ok.focus();
+  };
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')bg.classList.remove('on');});
+
+  function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  window.todayStr=today;
+
+  // ---------- 숫자 입력 ----------
+  function onlyDigits(el,max){var v=el.value.replace(/\D/g,'');if(max)v=v.slice(0,max);if(v!==el.value)el.value=v;}
+  function money(el){
+    var pos=el.selectionStart,before=el.value.slice(0,pos).replace(/\D/g,'').length;
+    var v=el.value.replace(/\D/g,'').replace(/^0+(?=\d)/,'').slice(0,12);
+    el.value=v.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    var i=0,c=0;while(i<el.value.length&&c<before){if(/\d/.test(el.value[i]))c++;i++;}
+    try{el.setSelectionRange(i,i);}catch(e){}
+  }
+  function dateText(el){
+    var v=el.value.replace(/\D/g,'').slice(0,8);
+    if(v.length>6)v=v.slice(0,4)+'-'+v.slice(4,6)+'-'+v.slice(6);else if(v.length>4)v=v.slice(0,4)+'-'+v.slice(4);
+    el.value=v;
+  }
+  document.addEventListener('input',function(e){
+    var el=e.target;if(!el.dataset)return;
+    if(el.dataset.type==='money')money(el);
+    else if(el.dataset.type==='digits')onlyDigits(el,+el.dataset.max||0);
+    else if(el.dataset.type==='date')dateText(el);
+  });
+
+  // ---------- 날짜 칸 (달력) ----------
+  var CAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8.8 14.6l2.2 2.2 4.4-4.4"/></svg>';
+  window.initDates=function(root){
+    (root||document).querySelectorAll('.date:not([data-ready])').forEach(function(box){
+      box.dataset.ready='1';
+      var txt=box.querySelector('input.in');
+      txt.dataset.type='date';txt.maxLength=10;txt.setAttribute('inputmode','numeric');txt.autocomplete='off';
+      var pk=document.createElement('input');pk.type='date';pk.className='picker';pk.tabIndex=-1;
+      if(box.dataset.max==='today')pk.max=today();
+      var b=document.createElement('button');b.type='button';b.className='cal';b.innerHTML=CAL;b.setAttribute('aria-label','달력 열기');
+      box.appendChild(b);box.appendChild(pk);
+      b.addEventListener('click',function(){
+        if(txt.readOnly||txt.disabled)return;
+        if(/^\d{4}-\d{2}-\d{2}$/.test(txt.value))pk.value=txt.value;
+        try{pk.showPicker();}catch(err){pk.style.pointerEvents='auto';pk.focus();pk.click();}
+      });
+      pk.addEventListener('change',function(){txt.value=pk.value;txt.dispatchEvent(new Event('input',{bubbles:true}));txt.dispatchEvent(new Event('change',{bubbles:true}));});
+    });
+  };
+
+  // ---------- 조회 / ? / 기타 안내 ----------
+  document.addEventListener('click',function(e){
+    var q=e.target.closest('.btn-q[data-lookup]');
+    if(q){msgBox('['+q.dataset.lookup+'] 조회 화면입니다.\n연습용 화면에서는 직접 입력해 주세요.',{title:'조회'});return;}
+    var h=e.target.closest('.help');
+    if(h){msgBox(h.dataset.help||'도움말 안내 화면입니다.\n(연습용 화면)',{title:'도움말'});return;}
+    var m=e.target.closest('[data-msg]');
+    if(m){msgBox(m.dataset.msg);}
+  });
+
+  document.addEventListener('DOMContentLoaded',function(){
+    initDates();
+    document.querySelectorAll('[data-today]').forEach(function(el){el.textContent=today();});
+  });
+})();
+</script>
+<script>
+(function(){
+  // 고용·산재 섹션 생성 (같은 구조)
+  var tpl=document.getElementById('tplEiIa').innerHTML;
+  function fill(id,name,badge,req){
+    document.getElementById(id).innerHTML=tpl.replace(/{{name}}/g,name).replace(/{{badge}}/g,badge)
+      .replace(/{{id}}/g,id).replace(/{{req}}/g,req?'<span class="req">*</span>':'');
+  }
+  fill('ei','고용보험','<span class="badge ei">Ei</span>',true);
+  fill('ia','산재보험','<span class="badge ia"><i>산</i></span>',false);
+
+  // 공통 / 보험별: 공통이면 보험별 칸은 회색(읽기전용)이 되고 공통 값이 그대로 들어감
+  var f=document.getElementById('f');
+  function sync(){
+    var dCommon=f.dateMode.value==='common', pCommon=f.payMode.value==='common';
+    var cd=document.getElementById('commonDate'), cp=document.getElementById('commonPay');
+    cd.readOnly=!dCommon; cd.closest('.date').classList.toggle('dis',!dCommon);
+    cp.readOnly=!pCommon;
+    document.querySelectorAll('.ins-date').forEach(function(el){el.readOnly=dCommon;el.closest('.date').classList.toggle('dis',dCommon);if(dCommon)el.value=cd.value;});
+    document.querySelectorAll('.ins-pay').forEach(function(el){el.readOnly=pCommon;if(pCommon)el.value=cp.value;});
+  }
+  f.addEventListener('change',function(e){if(e.target.name==='dateMode'||e.target.name==='payMode')sync();});
+  document.addEventListener('input',function(e){if(e.target.id==='commonDate'||e.target.id==='commonPay')sync();});
+  document.addEventListener('DOMContentLoaded',function(){initDates();sync();});
+
+  document.getElementById('btnSave').onclick=function(){msgBox('저장되었습니다.');};
+  document.getElementById('btnCancel').onclick=function(){
+    msgBox('입력한 내용을 모두 지우시겠습니까?',{title:'확인',cancel:true,onOk:function(){
+      f.reset();f.querySelectorAll('input.in').forEach(function(i){i.value='';});sync();window.scrollTo(0,0);}});
+  };
+})();
+</script>
+</body>
+</html>
